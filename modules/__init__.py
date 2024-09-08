@@ -1,0 +1,1 @@
+from .celery_tasks import process_video_task, test_task
