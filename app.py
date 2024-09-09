@@ -33,10 +33,16 @@ def upload_file():
         filepath = os.path.join(UPLOAD_FOLDER, filename)
         file.save(filepath)
         
-        # Generate waveform for original audio
-        original_waveform = generate_waveform(filepath)
-        
-        return jsonify({ 'original_waveform': original_waveform }), 202
+        try:
+            # Generate waveform for original audio
+            original_waveform = generate_waveform(filepath)
+            
+            return jsonify({ 'original_waveform': original_waveform }), 202
+        finally:
+            # Clean up the file after processing
+            if os.path.exists(filepath):
+                os.remove(filepath)
+                logger.info(f"Deleted file after waveform generation: {filepath}")
         
 @app.route('/process/<user_id>/<name>', methods=['POST'])
 def process_file(user_id, name):
@@ -109,7 +115,7 @@ def download_file(filename):
 def user_videos(user_id):
     user_videos = []
     for filename in os.listdir(PROCESSED_FOLDER):
-        if filename.startswith(f"{user_id}_"):
+        if user_id in filename:
             video_path = os.path.join(PROCESSED_FOLDER, filename)
             video_size = os.path.getsize(video_path)
             video_info = {

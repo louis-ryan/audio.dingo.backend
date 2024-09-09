@@ -6,7 +6,7 @@ def generate_waveform(audio_path, num_samples=1000):
         y = librosa.resample(y=y, orig_sr=sr, target_sr=int(sr * num_samples / len(y)))
     
     # Multiply each value by 100
-    y = y * 200
+    y = y * 500
     
     return y.tolist()
 
